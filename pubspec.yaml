@@ -14,5 +14,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
 flutter:
+  assets:
+    - assets/map_style.json  
   uses-material-design: true
   
