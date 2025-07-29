@@ -16,5 +16,6 @@ dev_dependencies:
 flutter:
   assets:
     - assets/map_style.json  
+    - assets/pin_marker.png  
   uses-material-design: true
   

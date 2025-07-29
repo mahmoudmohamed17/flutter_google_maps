@@ -17,6 +17,8 @@ class MyAppState extends State<MyApp> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   String _mapStyle = '';
+  final Set<Marker> _markers = {};
+  BitmapDescriptor? _pinMarker;
 
   @override
   void initState() {
@@ -35,8 +37,22 @@ class MyAppState extends State<MyApp> {
             zoom: 14.4746,
           ),
           style: _mapStyle,
-          onMapCreated: (GoogleMapController controller) {
+          markers: _markers,
+          onMapCreated: (GoogleMapController controller) async {
             _controller.complete(controller);
+            await _loadPinMarker();
+            _markers.add(
+              Marker(
+                markerId: MarkerId('Id1'),
+                position: LatLng(30.0444, 31.2357),
+                onTap: () {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Hello World!')));
+                },
+                icon: _pinMarker ?? BitmapDescriptor.defaultMarker,
+              ),
+            );
           },
         ),
       ),
@@ -51,10 +67,20 @@ class MyAppState extends State<MyApp> {
       _mapStyle = style;
     });
   }
+
+  Future _loadPinMarker() async {
+    final pin = await BitmapDescriptor.asset(
+      ImageConfiguration(size: Size(48, 48)),
+      'assets/pin_marker.png',
+    );
+    setState(() {
+      _pinMarker = pin;
+    });
+  }
 }
 
 // To navigate to a specific location, you can use the following method:
-// void goToLocation(LatLng location) async {
+// Future goToLocation(LatLng location) async {
 //   final GoogleMapController controller = await _controller.future;
 //   controller.animateCamera(
 //     CameraUpdate.newCameraPosition(
@@ -65,3 +91,6 @@ class MyAppState extends State<MyApp> {
 //     ),
 //   );
 // }
+
+// Best practice for markers is to make a set of them
+// and manage them in a stateful widget, allowing for dynamic updates.
